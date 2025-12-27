@@ -26,6 +26,9 @@ class _HomePageState extends State<HomePage> {
         child : GridView.builder(
           gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount : 2,
+            crossAxisSpacing: 6,
+            mainAxisSpacing: 6,
+            childAspectRatio: 0.95,
           ),
           itemCount: notesProvider.notes.length,
           itemBuilder: (context, index){
@@ -33,35 +36,39 @@ class _HomePageState extends State<HomePage> {
             String formattedDate = DateFormat("HH:mm, dd/MM/yyyy").format(currentNote.dateadded!);
             return Container(
               margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(3),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: BoxBorder.all(
+                border: Border.all(
                   style: BorderStyle.solid
                 )
               ),
               child : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    currentNote.title!,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    flex: 0,
+                    child: Text(
+                      currentNote.title!,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    currentNote.content!,
-                    style: TextStyle(
-                      fontSize: 25,
+                  Expanded(
+                    flex: 10,
+                    child: Text(
+                      currentNote.content!,
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 5,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     formattedDate,
