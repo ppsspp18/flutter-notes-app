@@ -22,6 +22,15 @@ class _HomePageState extends State<HomePage> {
         title : Text("Home Page", style : TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: (){
+                notesProvider.fetchNotes();
+              },
+              color: Colors.white,
+              icon: Icon(Icons.refresh),
+          )
+        ],
       ),
       body : (notesProvider.isLoading == false) ? SafeArea(
         child : (notesProvider.notes.isNotEmpty) ? GridView.builder(
