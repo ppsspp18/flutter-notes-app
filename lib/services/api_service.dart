@@ -1,11 +1,11 @@
 import 'package:frontend/models/notes.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'dart:developer';
 
 class ApiService {
-  static final String _baseUrl = "";
+  static final String _baseUrl = dotenv.env['BASE_URL']!;
   static Future<void> addNote(Note note) async{
     Uri requestUri = Uri.parse("$_baseUrl/add");
     var response = await http.post(requestUri, body: note.toMap());
