@@ -5,7 +5,9 @@ import 'package:frontend/models/notes.dart';
 import 'package:uuid/uuid.dart';
 
 class AddNewPage extends StatefulWidget {
-  const AddNewPage({super.key});
+  final bool isUpdate;
+  final Note? note;
+  const AddNewPage({super.key,required this.isUpdate, this.note});
 
   @override
   State<AddNewPage> createState() => _AddNewPageState();
@@ -28,6 +30,27 @@ class _AddNewPageState extends State<AddNewPage> {
      Navigator.pop(context);
   }
 
+  void updateNote(){
+    Note newNote = Note(
+        id : widget.note!.id,
+        userid: widget.note!.userid,
+        title: titleController.text,
+        content: contentController.text,
+        dateadded: DateTime.now()
+    );
+    Provider.of<NotesProvider>(context, listen: false).updateNote(newNote);
+    Navigator.pop(context);
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    if(widget.isUpdate){
+      titleController.text = widget.note!.title!;
+      contentController.text = widget.note!.content!;
+    }
+  }
+
   FocusNode noteFocus = FocusNode();
   @override
   Widget build(BuildContext context) {
@@ -36,7 +59,7 @@ class _AddNewPageState extends State<AddNewPage> {
         actions : [
           IconButton(
             onPressed: (){
-              addNewNote();
+              (widget.isUpdate) ? updateNote() : addNewNote();
             },
             icon : Icon(Icons.check)
           ),
@@ -59,7 +82,7 @@ class _AddNewPageState extends State<AddNewPage> {
                    fontSize: 20,
                     fontWeight: FontWeight.bold
                 ),
-                autofocus: true,
+                autofocus: (widget.isUpdate) ? false : true,
                 decoration : InputDecoration(
                   hintText: "Title",
                   contentPadding: EdgeInsets.all(20),

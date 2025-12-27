@@ -16,14 +16,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     NotesProvider notesProvider = Provider.of<NotesProvider>(context);
+    //notesProvider.fetchNotes();
     return Scaffold(
       appBar: AppBar(
         title : Text("Home Page", style : TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),
-      body : SafeArea(
-        child : GridView.builder(
+      body : (notesProvider.isLoading == false) ? SafeArea(
+        child : (notesProvider.notes.isNotEmpty) ? GridView.builder(
           gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount : 2,
             crossAxisSpacing: 6,
@@ -34,59 +35,85 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index){
             Note currentNote = notesProvider.notes[index];
             String formattedDate = DateFormat("HH:mm, dd/MM/yyyy").format(currentNote.dateadded!);
-            return Container(
-              margin: EdgeInsets.all(5),
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  style: BorderStyle.solid
-                )
-              ),
-              child : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    flex: 0,
-                    child: Text(
-                      currentNote.title!,
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (context) => AddNewPage(isUpdate: true, note: currentNote),
+                    fullscreenDialog: true,
+                  )
+                );
+              },
+              onLongPress: (){
+                notesProvider.deleteNote(currentNote);
+              },
+              child: Container(
+                margin: EdgeInsets.all(5),
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    style: BorderStyle.solid
+                  )
+                ),
+                child : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      flex: 0,
+                      child: Text(
+                        currentNote.title!,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 10,
+                      child: Text(
+                        currentNote.content!,
+                        style: TextStyle(
+                          fontSize: 15,
+                        ),
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      formattedDate,
                       style: TextStyle(
-                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Expanded(
-                    flex: 10,
-                    child: Text(
-                      currentNote.content!,
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Text(
-                    formattedDate,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              )
+                  ],
+                )
+              ),
             );
           },
-        ),
-      ),
+        ) :
+        Center(
+          child: Text(
+            "no notes added yet",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        )
+        ,
+      ) : Center(
+        child: CircularProgressIndicator(),
+      )
+
+      ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
             MaterialPageRoute(
-                builder: (context) => AddNewPage(),
+                builder: (context) => AddNewPage(isUpdate: false),
                 fullscreenDialog:true,
             )
           );
